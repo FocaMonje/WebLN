@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/hapticdata/toxiclibsjs@0.3.2/build/toxiclibs.min.js"></script>
+    <script src="libraries/quicksettings.js"></script>
+    <script src="libraries/p5.gui.js"></script>
+    <script src="libraries/scenemanager.js"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+   
+</head>
+<body>
+    
+    <script src="assets/javascript/node.js"></script>
+    <script src="assets/javascript/nodes.js"></script>
+    <script src="assets/javascript/graphManager.js"></script>
+    <script src="assets/javascript/graphAnalysis.js"></script>
+    <script src="assets/javascript/variables.js"></script>
+    <script src="assets/javascript/edge.js"></script>
+    <script src="assets/javascript/edges.js"></script>
+    <script src="assets/javascript/utils.js"></script>
+    <script src="assets/javascript/animacion.js"></script>
+    <script src="assets/javascript/relationGame.js"></script>
+    <script src="assets/javascript/gameTest.js"></script>
+    <script src="assets/javascript/timeLineGame.js"></script>
+    <script src="assets/javascript/initHtml.js"></script>
+    <script src="assets/javascript/state.js" ></script>
+    <script src="assets/javascript/executeByMode.js"></script>
+    <script src="assets/javascript/sketch.js" defer></script>
+
+    <div class="wrapper">
+
+        <div id="header"></div>
+        
+        <div id="div-izquierda" class="colum-info">
+            <div id="deseleccionar"></div>
+            <div id="deseleccionarFlecha"></div>
+            <div id="zoom-controls"></div>
+
+            <div id="animation-controls"><br><br>
+                <div id="start_year_value"></div>
+                <div id="end_year_value"></div>
+            </div>
+        </div>
+        <div id="div-derecha" class="colum-info">
+            
+            <div class="gameDisplay" id="timer">Time: 30</div>
+
+            <div class="separation"> ... </div>
+
+            <div class="gameDisplay" id="score">Score: 0</div>
+
+            <div class="separation"> ... </div>
+
+            <div class="gameDisplay" id="finalScore">Final Score: </div>
+
+            <div class="separation"> ... </div>
+
+            <div id="adjustGraphButton"></div>
+
+        </div>
+        <div id="scoreDisplay"></div>
+        <div id="navigation-controls"></div>
+    </div>
+</body>
+</html>
