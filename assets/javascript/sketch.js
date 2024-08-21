@@ -6,7 +6,7 @@ function setup() {
     canvas = createCanvas(canvas_width, canvas_height);
     centerCanvas(canvas);
 
-    initHtml();
+    // initHtml();
 
     manager = new SceneManager();
 
@@ -37,10 +37,11 @@ class Scene1 {
         this.textX = 10;
         this.textY = 0;
 
-        background("teal");
+        background("#D7D9F2");
         textAlign(CENTER);
 
-        fill("black");
+        textFont('Eater');
+        fill("blue");
         text("Inicio del juego\n" +
         "Presiona una tecla o el ratón \n\n" +
         "Para comenzar.", width / 2, height / 2);
@@ -74,7 +75,7 @@ class Scene2 {
     draw(){
 
         background(220);
-    
+        
         push();
         translate(scrollX , scrollY);
         scale(zoomX,zoomY);
@@ -108,10 +109,11 @@ class Scene3 {
         this.textX = 10;
         this.textY = 0;
 
-        background("teal");
+        background("#D7D9F2");
         textAlign(CENTER);
 
-        fill("black");
+        textFont('Eater');
+        fill("red");
         text("Game Over \n\n\n" +
         " Tu puntuación es " + state.score + " \n\n"+
         "Presiona una tecla o el ratón.\n\n" +

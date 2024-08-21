@@ -99,7 +99,7 @@ function executeByMode() {
                     if (state.selectedNode.label != undefined && state.selectedNode.label !== nodeUnderMouse.label) {
                         nodoPrevioSelec = state.selectedNode;
                         
-                        document.getElementById('node_label').value = state.selectedNode.label;
+                        //document.getElementById('node_label').value = state.selectedNode.label;
                 
                         // Verificar si el nodo bajo el ratón es el siguiente nodo más moderno en la lista
                         let indexPrevioSelec = state.gameNodes.findIndex(node => node.label === nodoPrevioSelec.label);

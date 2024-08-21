@@ -9,6 +9,9 @@
     <script src="libraries/quicksettings.js"></script>
     <script src="libraries/p5.gui.js"></script>
     <script src="libraries/scenemanager.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Eater&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/styles.css">
    
 </head>
@@ -30,6 +33,8 @@
     <script src="assets/javascript/state.js" ></script>
     <script src="assets/javascript/executeByMode.js"></script>
     <script src="assets/javascript/sketch.js" defer></script>
+
+    <div class="fondo-animado"></div>
 
     <div class="wrapper">
 
@@ -65,5 +70,43 @@
         <div id="scoreDisplay"></div>
         <div id="navigation-controls"></div>
     </div>
+
+    <script>
+       document.addEventListener("DOMContentLoaded", function() {
+        const fondoAnimado = document.querySelector(".fondo-animado");
+        const numeroParticulas = 100; // Número total de partículas
+
+        for (let i = 0; i < numeroParticulas; i++) {
+            const particula = document.createElement("div");
+            particula.className = "particula";
+
+            // Posición inicial aleatoria
+            particula.style.top = `${Math.random() * 100}vh`;
+            particula.style.left = `${Math.random() * 100}vw`;
+
+            // Añadir la partícula al contenedor
+            fondoAnimado.appendChild(particula);
+
+            // Configurar movimiento en ondas
+            const xOffset = Math.random() * 100;
+            const yOffset = Math.random() * 100;
+            const amplitude = 50; // Amplitud de la onda
+            const frequency = 0.01 + Math.random() * 0.03; // Frecuencia de la onda
+
+            function animate() {
+                const time = Date.now() * 0.002;
+                const x = amplitude * Math.sin(time * frequency + xOffset);
+                const y = amplitude * Math.cos(time * frequency + yOffset);
+                particula.style.transform = `translate(${x}px, ${y}px)`;
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+    });
+
+
+    </script>
+    
 </body>
 </html>
