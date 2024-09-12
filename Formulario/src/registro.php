@@ -1,0 +1,134 @@
+<?php
+// se encarga de registrar al jugador, validar su wallet...
+
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+header('Content-Type: application/json'); // Asegurar que la respuesta es JSON
+require_once 'db.php';
+require_once 'requetes.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['apodo'];
+    $wallet = $_POST['wallet'];
+    $email = $_POST['email'];
+
+   // Validar el formato de la Wallet of Satoshi
+   if (!preg_match('/^[a-zA-Z0-9._%+-]+@walletofsatoshi\.com$/', $wallet)) {
+        echo json_encode(['status' => 'error', 'message' => "La wallet proporcionada no es válida. Debe ser una Wallet of Satoshi."]);
+        exit();
+    }
+
+    // Conexión a la base de datos
+    $conn = obtenerConexionDB();
+    if (!$conn) {
+        echo json_encode(['status' => 'error', 'message' => "Error en la conexión a la base de datos."]);
+        exit();
+    }
+
+    // Comprobar si el apodo ya existe
+    $stmt = $conn->prepare(Requetes::SELECT_COUNT_APODO);
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $stmt->bind_result($apodoCount);
+    $stmt->fetch();
+    $stmt->close();
+  
+    if ($apodoCount > 0) {
+        echo json_encode(['status' => 'error', 'message' => "El apodo '$username' ya está en uso. Por favor, elige otro."]);
+        exit();
+    }
+  
+    // Comprobar si la wallet ya existe
+    $stmt = $conn->prepare(Requetes::SELECT_COUNT_WALLET);
+    $stmt->bind_param("s", $wallet);
+    $stmt->execute();
+    $stmt->bind_result($walletCount);
+    $stmt->fetch();
+    $stmt->close();
+  
+    if ($walletCount > 0) {
+        echo json_encode(['status' => 'error', 'message' => "La wallet proporcionada ya está registrada. Por favor, elige otra."]);
+        exit();
+    }
+
+    // Comprobar si el email ya existe
+    $stmt = $conn->prepare(Requetes::SELECT_COUNT_EMAIL);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->bind_result($emailCount);
+    $stmt->fetch();
+    $stmt->close();
+ 
+    if ($emailCount > 0) {
+        echo json_encode(['status' => 'error', 'message' => "El correo electrónico '$email' ya está en uso. Por favor, elige otro."]);
+        exit();
+    }
+
+    // Insertar jugador en la base de datos
+    $stmt = $conn->prepare(Requetes::INSERT_USUARIO);
+    $stmt->bind_param("sss", $username, $wallet, $email);
+    if ($stmt->execute()) {
+        $usuario_id = $stmt->insert_id;
+
+        // Crear el torneo si no existe ya para la fecha actual
+        $fecha = date('Y-m-d');
+        $stmt = $conn->prepare(Requetes::SELECT_TORNEO);
+        $stmt->bind_param("s", $fecha);
+        $stmt->execute();
+        $stmt->bind_result($torneo_id);
+        $stmt->fetch();
+        $stmt->close();
+
+        // Si no existe, crearlo
+        if (!$torneo_id) {
+            $stmt = $conn->prepare(Requetes::INSERT_TORNEO);
+            $stmt->bind_param("s", $fecha);
+            $stmt->execute();
+            $torneo_id = $stmt->insert_id;
+            $stmt->close();
+        }
+
+        // Registrar la inscripción
+        $stmt = $conn->prepare(Requetes::INSERT_INSCRIPTION);
+        $stmt->bind_param("iis", $usuario_id, $torneo_id, $fecha);
+        if ($stmt->execute()) {
+            $inscripcion_id = $stmt->insert_id;
+
+            // Insertar la puntuación inicial en la tabla score
+            $stmt = $conn->prepare(Requetes::INSERT_SCORE);
+            $stmt->bind_param("ii", $usuario_id, $torneo_id);
+            if (!$stmt->execute()) {
+                echo json_encode(['status' => 'error', 'message' => "Error al insertar puntuación inicial: " . $stmt->error]);
+                exit();
+            }
+
+            // Crear registro de pago en la tabla pago_inscripcion
+            $stmt = $conn->prepare(Requetes::INSERT_PAGO_INSCRIPTION);
+            $stmt->bind_param("ii", $usuario_id, $torneo_id);
+            $stmt->execute();
+            $pago_inscripcion_id = $stmt->insert_id;
+            $stmt->close();
+
+            // Almacena los IDs en la sesión
+            $_SESSION['usuario_id'] = $usuario_id;
+            $_SESSION['torneo_id'] = $torneo_id;
+            $_SESSION['inscripcion_id'] = $inscripcion_id;
+
+            // Registro exitoso, enviar respuesta
+            echo json_encode(['status' => 'success', 'message' => "Registro exitoso"]);
+            exit();
+
+        } else {
+            echo json_encode(['status' => 'error', 'message' => "Error en la inserción de inscripción: " . $stmt->error]);
+            exit();
+        }
+    } else {
+        echo json_encode(['status' => 'error', 'message' => "Error en la inserción de usuario: " . $stmt->error]);
+        exit();
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>

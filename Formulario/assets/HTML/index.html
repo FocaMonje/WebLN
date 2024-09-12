@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Jugadores</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="../CSS/styles.css">
+    
+</head>
+<body>
+    <canvas id="particlesCanvas"></canvas>
+
+    <h1>Registro de Jugadores</h1>
+    <form id="registerForm">
+        <label for="apodo">Apodo:</label><br>
+        <input type="text" id="apodo" name="apodo" required><br><br>
+
+        <label for="email">Correo Electrónico:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+
+
+        <label for="wallet">Wallet of Satoshi:</label><br>
+        <input type="text" id="wallet" name="wallet" required placeholder="ejemplo: exitsky15@walletofsatoshi.com"><br><br>
+        
+        <input type="submit" value="Registrar">
+    </form>
+
+    <p id="error"></p>
+
+    <!-- Botón oculto para redirigir al juego -->
+   <button type="button" id="redirectButton">Ir al Juego</button>
+
+    <script src="../JAVASCRIPT/formulario.js"></script>
+    <script src="../JAVASCRIPT/efectoFormulario.js"></script>
+    <script src="../JAVASCRIPT/efectoFondo.js"></script>
+</body>
+</html>
