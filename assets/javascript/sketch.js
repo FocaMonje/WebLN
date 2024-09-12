@@ -2,7 +2,7 @@
 var manager ;
 
 function setup() {
-
+    
     canvas = createCanvas(canvas_width, canvas_height);
     centerCanvas(canvas);
 
@@ -37,10 +37,12 @@ class Scene1 {
         this.textX = 10;
         this.textY = 0;
 
-        background("teal");
+        background("#EAEAEA");
         textAlign(CENTER);
 
+        textFont('Labrada');
         fill("black");
+        textSize(32);
         text("Inicio del juego\n" +
         "Presiona una tecla o el ratón \n\n" +
         "Para comenzar.", width / 2, height / 2);
@@ -108,15 +110,19 @@ class Scene3 {
         this.textX = 10;
         this.textY = 0;
 
-        background("teal");
+        background("#EAEAEA");
         textAlign(CENTER);
 
-        fill("black");
+        textFont('Labrada');
+        fill("red");
+        textSize(32);
         text("Game Over \n\n\n" +
         " Tu puntuación es " + state.score + " \n\n"+
         "Presiona una tecla o el ratón.\n\n" +
         "Para volver a empezar.", width / 2, height / 2);
-
+        
+        // Llamar a la función para registrar ganadores
+        registerWinners(); 
     }
 
     keyPressed(){

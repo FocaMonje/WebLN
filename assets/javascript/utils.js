@@ -252,3 +252,11 @@ function randomIntFromInterval(min, max) { // min and max included
 
 function deleteObject(obj) {   Object.keys(obj).forEach(key => delete obj[key]); }
 
+// Función para registrar ganadores
+function registerWinners() {
+  console.log("Intentando registrar ganadores...");
+  fetch('../WebLN/src/ganadores.php')
+      .then(response => response.text())
+      .then(data => console.log('Ganadores registrados: ', data))
+      .catch(error => console.error('Error al registrar los ganadores:', error));
+}
