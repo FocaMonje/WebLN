@@ -6,7 +6,7 @@ function setup() {
     canvas = createCanvas(canvas_width, canvas_height);
     centerCanvas(canvas);
 
-    initHtml();
+    // initHtml();
 
     manager = new SceneManager();
 
@@ -76,7 +76,7 @@ class Scene2 {
     draw(){
 
         background(220);
-    
+        
         push();
         translate(scrollX , scrollY);
         scale(zoomX,zoomY);

@@ -2,8 +2,8 @@
 // archivo para la conexión a la base de datos
 
 function obtenerConexionDB() {
-    // Ruta al archivo param.ini
-    $config_file = '../param.ini';
+    // Ruta al archivo param_form.ini
+    $config_file = '../param_form.ini';
     
     // Verificar si el archivo existe
     if (!file_exists($config_file)) {

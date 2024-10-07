@@ -1,12 +1,78 @@
 <?php
-// se encarga de registrar al jugador, validar su wallet...
-
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 header('Content-Type: application/json'); // Asegurar que la respuesta es JSON
-require_once 'db.php';
-require_once 'requetes.php';
+require_once 'db_form.php';
+require_once 'requetes_form.php';
+
+// Incluye la URL y API de LNBits
+define('LNBITS_API_URL', 'Aquí se pone el url');
+define('LNBITS_API_KEY', 'Aquí se pone la API'); // aquí va la admin Key de LNBits
+
+function crearPayLink($amount, $memo, $description, $usuario_id, $torneo_id) {
+    $url = LNBITS_API_URL;
+    $headers = [
+        'X-Api-Key: ' . LNBITS_API_KEY,
+        'Content-Type: application/json'
+    ];
+
+    $webhookUrl = 'Aquí pongo la dirección del archivo que se encarga de confirmar el pago';
+
+    $data = [
+        'out' => false,
+        'amount' => $amount,
+        'memo' => $memo,
+        'description' => $description,
+        'webhook' => $webhookUrl,
+        'extra' => json_encode([  // Para convertir los datos en formato JSON
+            'usuario_id' => $usuario_id,
+            'torneo_id' => $torneo_id
+        ])
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+
+    $response = curl_exec($ch);
+    
+    if (curl_errno($ch)) {
+        // Retornar un error en formato JSON
+        echo json_encode(['status' => 'error', 'message' => 'Error de cURL: ' . curl_error($ch)]);
+        return false;
+    }
+
+    curl_close($ch);
+
+    // Variable para almacenar los logs y devolverlos al cliente
+    $logs = [];
+
+    // Imprimir la respuesta completa de la API
+    error_log("LNBits API Response: " . $response);
+    $logs[] = "LNBits API Response: " . $response;
+
+    $responseData = json_decode($response, true);
+
+    // Verificar si hay un error en la respuesta de LNBits
+    if (isset($responseData['message'])) {
+        // Agregar el error al log
+        $logs[] = "Error de LNBits: " . $responseData['message'];
+        
+        // Enviar la respuesta completa de LNBits al cliente para depuración
+        echo json_encode([
+            'status' => 'error', 
+            'message' => 'Error de LNBits: ' . $responseData['message'],
+            'api_response' => $response,  // Devolver la respuesta de la API
+            'logs' => $logs               // Devolver los logs
+        ]);
+        return false;
+    }
+
+    return isset($responseData['payment_url']) ? $responseData['payment_url'] : false;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['apodo'];
@@ -115,9 +181,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['torneo_id'] = $torneo_id;
             $_SESSION['inscripcion_id'] = $inscripcion_id;
 
-            // Registro exitoso, enviar respuesta
-            echo json_encode(['status' => 'success', 'message' => "Registro exitoso"]);
-            exit();
+            // Crear un Pay Link en LNBits para que el jugador pueda pagar
+            $amount = 10; // Cuantía de la inscripción en satoshis
+            $memo = "Pago inscripción torneo $fecha";
+            $description = "Pago para acceder al torneo";
+
+            // Crear el enlace de pago
+            $payUrl = crearPayLink($amount, $memo, $description, $usuario_id, $torneo_id);
+            if ($payUrl) {
+                $_SESSION['pay_url'] = $payUrl;
+
+                // Redirigir a la página donde se muestra el código QR
+                header('Location: Formulario\assets_form\HTML_form\pagoQr.php');
+                exit();
+            } else {
+                echo json_encode(['status' => 'error', 'message' => "Error al crear el pago."]);
+                exit();
+            }
 
         } else {
             echo json_encode(['status' => 'error', 'message' => "Error en la inserción de inscripción: " . $stmt->error]);

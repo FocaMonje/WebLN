@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS pago_inscripcion (
     pago_inscripcion_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT UNSIGNED NOT NULL,
     torneo_id INT UNSIGNED NOT NULL,
-    estado ENUM('pendiente', 'pagado') DEFAULT 'pagado',
+    estado ENUM('pendiente', 'pagado') DEFAULT 'pendiente',
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (torneo_id) REFERENCES torneos(torneo_id) ON DELETE CASCADE
 );
