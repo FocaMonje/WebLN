@@ -22,7 +22,8 @@ function crearPayLink($amount, $memo, $description, $usuario_id, $torneo_id) {
     $data = [
         'out' => false,
         'amount' => $amount,
-        'memo' => $memo,
+        'min' => $amount,
+        'max' => $amount, 
         'description' => $description,
         'webhook' => $webhookUrl,
         'extra' => json_encode([  // Para convertir los datos en formato JSON
@@ -38,10 +39,11 @@ function crearPayLink($amount, $memo, $description, $usuario_id, $torneo_id) {
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
     $response = curl_exec($ch);
+    $info = curl_getinfo($ch);  // Obtener información de la respuesta
     
     if (curl_errno($ch)) {
         // Retornar un error en formato JSON
-        echo json_encode(['status' => 'error', 'message' => 'Error de cURL: ' . curl_error($ch)]);
+        echo json_encode(['status' => 'error', 'message' => 'Error de cURL: ' . curl_error($ch), 'http_code' => $info['http_code']]);
         return false;
     }
 
@@ -53,6 +55,7 @@ function crearPayLink($amount, $memo, $description, $usuario_id, $torneo_id) {
     // Imprimir la respuesta completa de la API
     error_log("LNBits API Response: " . $response);
     $logs[] = "LNBits API Response: " . $response;
+    $logs[] = "HTTP Status Code: " . $info['http_code'];
 
     $responseData = json_decode($response, true);
 
