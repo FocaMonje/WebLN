@@ -6,6 +6,7 @@ In order for players to have access to the game they must fill out a form and pa
 
 
 Cosas por hacer:
+
     1. Resolver el error con la actualización del estado del pago en la base de datos
 
     2. Que dé acceso al juego después de pagar
