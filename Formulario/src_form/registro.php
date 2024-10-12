@@ -10,6 +10,12 @@ require_once 'requetes_form.php';
 define('LNBITS_API_URL', 'Aquí se pone el url');
 define('LNBITS_API_KEY', 'Aquí se pone la API'); // aquí va la admin Key de LNBits
 
+function escribirLog($mensaje) {
+    $archivoLog = 'lnbits_log.txt';  // Ruta del archivo de log
+    $hora = date('Y-m-d H:i:s');     // Agrega un timestamp
+    file_put_contents($archivoLog, "[$hora] $mensaje" . PHP_EOL, FILE_APPEND);
+}
+
 function crearPayLink($amount, $memo, $description, $usuario_id, $torneo_id) {
     $url = LNBITS_API_URL;
     $headers = [
@@ -20,17 +26,22 @@ function crearPayLink($amount, $memo, $description, $usuario_id, $torneo_id) {
     $webhookUrl = 'Aquí pongo la dirección del archivo que se encarga de confirmar el pago';
 
     $data = [
-        'out' => false,
+        //'out' => false,
         'amount' => $amount,
         'min' => $amount,
         'max' => $amount, 
+        'memo' => $memo,
         'description' => $description,
-        'webhook' => $webhookUrl,
+        'comment_chars' => 0,
+        'webhook_url' => $webhookUrl,
         'extra' => json_encode([  // Para convertir los datos en formato JSON
             'usuario_id' => $usuario_id,
             'torneo_id' => $torneo_id
         ])
     ];
+
+    // Registrar los datos que se enviarán a la API
+    escribirLog("Datos enviados a LNBits: " . json_encode($data));
 
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -38,43 +49,41 @@ function crearPayLink($amount, $memo, $description, $usuario_id, $torneo_id) {
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
-    $response = curl_exec($ch);
-    $info = curl_getinfo($ch);  // Obtener información de la respuesta
     
-    if (curl_errno($ch)) {
-        // Retornar un error en formato JSON
-        echo json_encode(['status' => 'error', 'message' => 'Error de cURL: ' . curl_error($ch), 'http_code' => $info['http_code']]);
+    $response = curl_exec($ch);
+    $info = curl_getinfo($ch);
+    $curlError = curl_error($ch);
+
+    if ($curlError) {
+        escribirLog("Error de cURL: $curlError, Código HTTP: " . $info['http_code']);
         return false;
     }
 
     curl_close($ch);
 
-    // Variable para almacenar los logs y devolverlos al cliente
-    $logs = [];
-
-    // Imprimir la respuesta completa de la API
-    error_log("LNBits API Response: " . $response);
-    $logs[] = "LNBits API Response: " . $response;
-    $logs[] = "HTTP Status Code: " . $info['http_code'];
+   // Log de la respuesta cruda
+   escribirLog("Respuesta cruda de la API LNBits: " . $response);
 
     $responseData = json_decode($response, true);
 
-    // Verificar si hay un error en la respuesta de LNBits
-    if (isset($responseData['message'])) {
-        // Agregar el error al log
-        $logs[] = "Error de LNBits: " . $responseData['message'];
-        
-        // Enviar la respuesta completa de LNBits al cliente para depuración
-        echo json_encode([
-            'status' => 'error', 
-            'message' => 'Error de LNBits: ' . $responseData['message'],
-            'api_response' => $response,  // Devolver la respuesta de la API
-            'logs' => $logs               // Devolver los logs
-        ]);
+    if ($responseData === null || !is_array($responseData)) {
+        escribirLog("Error: La respuesta de la API no es un JSON válido. Respuesta: " . $response);
         return false;
     }
 
-    return isset($responseData['payment_url']) ? $responseData['payment_url'] : false;
+    if (isset($responseData['message'])) {
+        escribirLog("Error en la respuesta de LNBits: " . $responseData['message']);
+        return false;
+    }
+
+    // Aquí se construye el payment_url con el id recibido
+    if (isset($responseData['id'])) {
+        $payment_url = "https://lnbits.lnwebs.com/lnurlp/link/" . $responseData['id'];
+        return $payment_url;
+    } else {
+        escribirLog("Error: La respuesta de la API no contiene 'id'. Respuesta: " . $response);
+        return false;
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -194,8 +203,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($payUrl) {
                 $_SESSION['pay_url'] = $payUrl;
 
-                // Redirigir a la página donde se muestra el código QR
-                header('Location: Formulario\assets_form\HTML_form\pagoQr.php');
+                // Registrar la URL de pago para depuración
+                escribirLog("URL de pago: " . $_SESSION['pay_url']);
+
+                // Crear json con la URL de redirección y enviarla a formulario.js
+                echo json_encode(['status' => 'success', 'pay_url' => 'https://webln.openlabs.org/Formulario/assets_form/HTML_form/pagoQr.php']);
                 exit();
             } else {
                 echo json_encode(['status' => 'error', 'message' => "Error al crear el pago."]);

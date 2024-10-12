@@ -16,29 +16,9 @@ document.getElementById('registerForm').addEventListener('submit', function(even
     })
     .then(response => response.json())
     .then(data => {
-        // Mostrar la respuesta completa de la API LNBits en la consola
-        console.log("Respuesta completa de la API LNBits:", data.api_response);  
-        //console.log(data); // Ver el contenido de la respuesta
-
-        // Mostrar los logs en la consola del navegador
-        if (data.logs) {
-            data.logs.forEach(log => {
-                console.log("Log desde PHP:", log);
-            });
-        }
-    
         if (data.status === "success") {
-            errorElement.textContent = "Registro exitoso.";
-            //console.log("Entrando en el bloque de éxito");
-    
-            // Mostrar el botón de redirección
-            // const redirectButton = document.getElementById('redirectButton');
-            // redirectButton.style.display = 'block';  // Cambia el estilo para que se vea
-            // redirectButton.style.backgroundColor = 'lightgray';  
-            // redirectButton.style.color = 'black';  // Color del texto
-    
-            // console.log("Botón de redirección mostrado.");  
-
+            errorElement.textContent = "Registro exitoso. Redirigiendo a la página de pago...";
+            window.location.href = data.pay_url;  // Redirige al enlace de pago
         } else {
             errorElement.textContent = data.message || "Error desconocido.";
         }

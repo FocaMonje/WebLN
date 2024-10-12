@@ -10,24 +10,14 @@ session_start();
 </head>
 <body>
     <h1>Paga tu inscripción</h1>
-    <div id="qrCode"></div>
-    <p>Escanea el código QR para realizar el pago.</p>
-
-    <!-- Cargar la librería para generar el QR -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode"></script>
-    <script>
-        // Obtener la URL de pago desde la sesión PHP
-        const payUrl = "<?php echo isset($_SESSION['pay_url']) ? $_SESSION['pay_url'] : ''; ?>";
-        
-        if (payUrl) {
-            const qrCodeDiv = document.getElementById('qrCode');
-            QRCode.toCanvas(qrCodeDiv, payUrl, { width: 256 }, function (error) {
-                if (error) console.error(error);
-            });
-        } else {
-            console.error("No se encontró la URL del enlace de pago.");
-            alert("Error: No se pudo encontrar la URL del pago. Por favor, intenta registrarte de nuevo.");
-        }
-    </script>
+    <div id="qrCode">
+        <?php if (isset($_SESSION['pay_url'])): ?>
+            <p>Escanea el código QR para realizar el pago:</p>
+            <iframe src="<?php echo $_SESSION['pay_url']; ?>" width="300" height="400" frameborder="0"></iframe>
+        <?php else: ?>
+            <p>Error: No se pudo obtener el enlace de pago.</p>
+        <?php endif; ?>
+    </div>
+    <p>Si el código QR no se muestra, intenta recargar la página.</p>
 </body>
 </html>
