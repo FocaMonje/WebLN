@@ -63,8 +63,12 @@ button {
     font-size: 20px;
     font-weight: bold;
     margin-top: 10px;
+    background-color: rgb(235, 233, 233);
 }
 
+#explicacion {
+    padding: 10px;
+}
 
 #navigation-controls {
     position: absolute;
@@ -108,7 +112,11 @@ button {
 }
 
 /* fondo.css */
+<<<<<<< HEAD:assets/css/styles.css
 .fondo-animado {
+=======
+/* .fondo-animado {
+>>>>>>> Implementacion-Pago-LNbits:WebLN/assets/css/styles.css
     position: fixed;
     top: 0;
     left: 0;
@@ -116,14 +124,22 @@ button {
     height: 100%;
     z-index: -1;
     overflow: hidden;
+<<<<<<< HEAD:assets/css/styles.css
     background-color: rgb(224, 247, 250);
+=======
+    background-color: rgb(191, 191, 191);
+>>>>>>> Implementacion-Pago-LNbits:WebLN/assets/css/styles.css
 }
 
 .particula {
     position: absolute;
     width: 50px;
     height: 50px;
+<<<<<<< HEAD:assets/css/styles.css
     background: radial-gradient(circle, rgba(247, 224, 77) 20%, transparent 20%);
+=======
+    background: radial-gradient(circle, rgb(130, 130, 130) 20%, transparent 20%);
+>>>>>>> Implementacion-Pago-LNbits:WebLN/assets/css/styles.css
     border-radius: 50%;
     opacity: 0.8;
     animation: mover 15s infinite alternate ease-in-out;
@@ -145,4 +161,8 @@ button {
     100% {
         transform: translate(-30px, 40px);
     }
+<<<<<<< HEAD:assets/css/styles.css
 }
+=======
+} */
+>>>>>>> Implementacion-Pago-LNbits:WebLN/assets/css/styles.css

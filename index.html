@@ -3,110 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grafo</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/hapticdata/toxiclibsjs@0.3.2/build/toxiclibs.min.js"></script>
-    <script src="libraries/quicksettings.js"></script>
-    <script src="libraries/p5.gui.js"></script>
-    <script src="libraries/scenemanager.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Eater&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css">
-   
+    <title>Registro de Jugadores</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="Formulario\assets_form\CSS_form\styles_form.css">
+    
 </head>
 <body>
-    
-    <script src="assets/javascript/node.js"></script>
-    <script src="assets/javascript/nodes.js"></script>
-    <script src="assets/javascript/graphManager.js"></script>
-    <script src="assets/javascript/graphAnalysis.js"></script>
-    <script src="assets/javascript/variables.js"></script>
-    <script src="assets/javascript/edge.js"></script>
-    <script src="assets/javascript/edges.js"></script>
-    <script src="assets/javascript/utils.js"></script>
-    <script src="assets/javascript/animacion.js"></script>
-    <script src="assets/javascript/relationGame.js"></script>
-    <script src="assets/javascript/gameTest.js"></script>
-    <script src="assets/javascript/timeLineGame.js"></script>
-    <script src="assets/javascript/initHtml.js"></script>
-    <script src="assets/javascript/state.js" ></script>
-    <script src="assets/javascript/executeByMode.js"></script>
-    <script src="assets/javascript/sketch.js" defer></script>
+    <canvas id="particlesCanvas"></canvas>
 
-    <div class="fondo-animado"></div>
+    <h1>Registro de Jugadores</h1>
+    <form id="registerForm">
+        <label for="apodo">Apodo:</label><br>
+        <input type="text" id="apodo" name="apodo" required><br><br>
 
-    <div class="wrapper">
+        <label for="email">Correo Electrónico:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
 
-        <div id="header"></div>
+
+        <label for="wallet">Wallet of Satoshi:</label><br>
+        <input type="text" id="wallet" name="wallet" required placeholder="ejemplo: exitsky15@walletofsatoshi.com"><br><br>
         
-        <div id="div-izquierda" class="colum-info">
-            <div id="deseleccionar"></div>
-            <div id="deseleccionarFlecha"></div>
-            <div id="zoom-controls"></div>
+        <input type="submit" value="Registrar">
+    </form>
 
-            <div id="animation-controls"><br><br>
-                <div id="start_year_value"></div>
-                <div id="end_year_value"></div>
-            </div>
-        </div>
-        <div id="div-derecha" class="colum-info">
-            
-            <div class="gameDisplay" id="timer">Time: 30</div>
+    <p id="error"></p>
 
-            <div class="separation"> ... </div>
+    <!-- Botón oculto para redirigir al juego -->
+   <button type="button" id="redirectButton">Ir al Juego</button>
 
-            <div class="gameDisplay" id="score">Score: 0</div>
-
-            <div class="separation"> ... </div>
-
-            <div class="gameDisplay" id="finalScore">Final Score: </div>
-
-            <div class="separation"> ... </div>
-
-            <div id="adjustGraphButton"></div>
-
-        </div>
-        <div id="scoreDisplay"></div>
-        <div id="navigation-controls"></div>
-    </div>
-
-    <script>
-       document.addEventListener("DOMContentLoaded", function() {
-        const fondoAnimado = document.querySelector(".fondo-animado");
-        const numeroParticulas = 100; // Número total de partículas
-
-        for (let i = 0; i < numeroParticulas; i++) {
-            const particula = document.createElement("div");
-            particula.className = "particula";
-
-            // Posición inicial aleatoria
-            particula.style.top = `${Math.random() * 100}vh`;
-            particula.style.left = `${Math.random() * 100}vw`;
-
-            // Añadir la partícula al contenedor
-            fondoAnimado.appendChild(particula);
-
-            // Configurar movimiento en ondas
-            const xOffset = Math.random() * 100;
-            const yOffset = Math.random() * 100;
-            const amplitude = 50; // Amplitud de la onda
-            const frequency = 0.01 + Math.random() * 0.03; // Frecuencia de la onda
-
-            function animate() {
-                const time = Date.now() * 0.002;
-                const x = amplitude * Math.sin(time * frequency + xOffset);
-                const y = amplitude * Math.cos(time * frequency + yOffset);
-                particula.style.transform = `translate(${x}px, ${y}px)`;
-                requestAnimationFrame(animate);
-            }
-
-            animate();
-        }
-    });
-
-
-    </script>
-    
+    <script src="Formulario\assets_form\JAVASCRIPT_form\efectoFondo.js"></script>
+    <script src="Formulario\assets_form\JAVASCRIPT_form\efectoFormulario.js"></script>
+    <script src="Formulario\assets_form\JAVASCRIPT_form\formulario.js"></script>
 </body>
 </html>

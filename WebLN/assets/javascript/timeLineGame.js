@@ -116,19 +116,68 @@ function initTimeLineGame(){
 }
 
 
-function updateScore(points = 1){
+// function updateScore(points = 1){
 
-    state.score += points ;
-    const scoreElement = document.getElementById('score'); // Asegúrate de que el ID es correcto
+//     state.score += points ;
+//     const scoreElement = document.getElementById('score'); // Asegúrate de que el ID es correcto
+//     if (scoreElement) {
+//         scoreElement.textContent = 'Score: ' + state.score; // Mostrar el tiempo inicial
+//         scoreElement.style.display = 'block'; // Asegúrate de que el temporizador esté visible
+//     }
+//     if(points > 0){
+//         scoreElement.style.color = "green";
+//     } else {
+//         scoreElement.style.color = "red";
+//     }
+// }
+
+//Esta versión de updateScore envía la puntuación al archivo PHP
+function updateScore(points = 1) {
+    state.score += points;
+    const scoreElement = document.getElementById('score');
     if (scoreElement) {
-        scoreElement.textContent = 'Score: ' + state.score; // Mostrar el tiempo inicial
-        scoreElement.style.display = 'block'; // Asegúrate de que el temporizador esté visible
+        scoreElement.textContent = 'Score: ' + state.score;
+        scoreElement.style.display = 'block';
     }
-    if(points > 0){
+    if (points > 0) {
         scoreElement.style.color = "green";
     } else {
         scoreElement.style.color = "red";
     }
+
+    console.log('Torneo ID:', state.torneoID); 
+    console.log('Usuario ID:', state.usuarioID); 
+    console.log('Score:', state.score); 
+
+
+    // Enviar la puntuación al servidor
+    fetch('../WebLN/src/guardarPuntuacion.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            // usuario_id: state.usuarioID,
+            // torneo_id: state.torneo_id, 
+            score: state.score
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la red');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            console.log('Puntuación guardada correctamente.');
+        } else {
+            console.error('Error al guardar la puntuación:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error de red al guardar la puntuación:', error);
+    });
 }
 
 
@@ -138,6 +187,30 @@ function endTimeLineMode(){
     let finalScoreElement = document.getElementById('finalScore') ;
     finalScoreElement.textContent = 'Final Score: ' + state.score; // Mostrar el tiempo inicial
     finalScoreElement.style.color = 'red'; // Asegúrate de que el temporizador esté visible
+
+    // Guardar la puntuación en la base de datos
+    fetch('../src/guardarPuntuacion.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            torneo_id: state.torneoID,
+            usuario_id: state.usuarioID, 
+            score: state.score
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Puntuación guardada:', data);
+        } else {
+            console.error('Error al guardar la puntuación:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+    });
     
 }
 
